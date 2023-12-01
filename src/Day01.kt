@@ -3,7 +3,7 @@ fun main() {
         var reponse = 0
 
         input.forEach { uneLigne ->
-            val ligneFiltree = uneLigne.map { if (it.isDigit()) it.toString().toInt() else 0 }.filter { it != 0 }
+            val ligneFiltree = uneLigne.filter { it.isDigit() }.map { it.toString().toInt() }
             reponse += ligneFiltree[0] * 10 + ligneFiltree[ligneFiltree.size - 1]
         }
 
