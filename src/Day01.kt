@@ -34,11 +34,12 @@ fun main() {
                 if (leChar.isDigit()) {
                     ligneFiltree.add(leChar.toString().toInt())
                 } else {
-                    lesChiffres.forEach { un ->
-                        if (i == uneLigne.indexOf(un, i)) {
-                            lesChiffresTochiffres[un]?.let { ligneFiltree.add(it) }
-                        }
-                    }
+                    lesChiffresTochiffres[lesChiffres.firstOrNull() {
+                        i == uneLigne.indexOf(
+                            it,
+                            i
+                        )
+                    }]?.let { ligneFiltree.add(it) }
                 }
             }
 
