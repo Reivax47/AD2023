@@ -32,23 +32,15 @@ fun main() {
 
         }
 
-        var i = 0
-        while (i < mesCards.size) {
-            val cardActuelle = mesCards[i]
-            val combien = cardActuelle.nb
+        mesCards.forEach { cardActuelle ->
             if (cardActuelle.result > 0) {
                 for (y in 1..cardActuelle.result) {
                     val cardToadd = mesCards.find { it.num == cardActuelle.num + y }
-                    if (cardToadd != null) {
-                        cardToadd.nb += combien
-                    }
+                    cardToadd?.nb = cardToadd?.nb?.plus(cardActuelle.nb)!!
                 }
             }
-            i++
         }
-        mesCards.forEach { it ->
-            reponse += it.nb
-        }
+        reponse = mesCards.sumOf { it.nb.toLong() }
         return reponse
     }
 
