@@ -1,24 +1,18 @@
+import kotlin.math.max
+import kotlin.math.min
+
 fun main() {
 
     fun checkSymbole(input: List<String>, x1: Int, x2: Int, y: Int): Boolean {
-
-        if (y < 0 || y >= input.size) {
-            return false
-        }
-        val debut = if (x1 < 0) 0 else x1
-        val fin = if (x2 >= input[0].length) input[0].length else x2
-
-
-        val test = input[y].subSequence(debut, fin).filter { !it.isDigit() && it != '.' }
-
+        val test = input[y].subSequence(x1, x2).filter { !it.isDigit() && it != '.' }
         return test.isNotEmpty()
     }
 
     fun symbole(input: List<String>, posY: Int, posXDebut: Int, posXFin: Int): Boolean {
-        val xDebut = posXDebut - 1
-        val xFin = posXFin + 1
+        val xDebut = (posXDebut - 1).coerceIn(0 .. input[0].length)
+        val xFin = (posXFin + 1).coerceIn(0 .. input[0].length)
 
-        for (i in posY - 1..posY + 1) {
+        for (i in max(posY - 1, 0)..min(posY + 1, input.size -1)) {
             if (checkSymbole(input, xDebut, xFin, i)) {
                 return true
             }
@@ -30,7 +24,7 @@ fun main() {
 
         var reponse = 0
         val largeur = input[0].length
-        for (posY in 0 until input.size) {
+        for (posY in input.indices) {
             var posXDebut = 0
 
             while (posXDebut < largeur) {
@@ -71,7 +65,7 @@ fun main() {
         while (posX < input[0].length && input[y][posX].isDigit()) {
             posX++
         }
-        valeur = input[y].subSequence(x +1, posX ).toString()
+        valeur = input[y].subSequence(x + 1, posX).toString()
         if (valeur != "") {
             reponse.add(valeur.toInt())
         }
@@ -84,17 +78,17 @@ fun main() {
         var posY = y - 1
         if (posY >= 0) {
             if (!input[posY][x].isDigit()) {
-                reponse.addAll(ints(x,input,posY))
+                reponse.addAll(ints(x, input, posY))
             } else {
                 var debX = x
                 var finX = x
                 while (debX > 0 && input[posY][debX].isDigit()) {
-                    debX --
+                    debX--
                 }
                 while (finX < input[0].length && input[posY][finX].isDigit()) {
-                    finX ++
+                    finX++
                 }
-                val valeur = input[posY].subSequence(debX +1, finX)
+                val valeur = input[posY].subSequence(debX + 1, finX)
                 if (valeur != "") {
                     reponse.add(valeur.toString().toInt())
                 }
@@ -104,15 +98,15 @@ fun main() {
         posY = y + 1
         if (posY < input.size) {
             if (!input[posY][x].isDigit()) {
-                reponse.addAll(ints(x,input,posY))
-            }else {
+                reponse.addAll(ints(x, input, posY))
+            } else {
                 var debX = x
                 var finX = x
                 while (debX > 0 && input[posY][debX].isDigit()) {
-                    debX --
+                    debX--
                 }
                 while (finX < input[0].length && input[posY][finX].isDigit()) {
-                    finX ++
+                    finX++
                 }
                 val valeur = input[posY].subSequence(debX + 1, finX)
                 if (valeur != "") {
@@ -126,7 +120,7 @@ fun main() {
     fun produitAdjacent(input: List<String>, x: Int, y: Int): Int {
 
         val laListe = listAdjacent(input, x, y)
-        if ( laListe.size != 2) {
+        if (laListe.size != 2) {
             return 0
         }
         return laListe[0] * laListe[1]
