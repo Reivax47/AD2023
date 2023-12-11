@@ -1,21 +1,24 @@
+import kotlin.math.abs
+
 fun main() {
     val output = mutableListOf<String>()
     data class Galaxie(val x: Int, val y: Int, val numero: Int)
     data class Distance(val un : Galaxie, val deux :Galaxie, var distance : Int )
 
-    fun calculeDistance(un: Galaxie, deux: Galaxie): Int {
-
-        return 0
+    fun distanceManhattan(un: Galaxie, deux: Galaxie): Int {
+        return abs(un.x - deux.x) + abs(un.y - deux.y)
     }
-    fun part1(input: List<String>): Int {
-        var reponse = 0
 
+    fun part1(input: List<String>): Long {
+        var reponse = 0L
+        output.clear()
         val ciel = mutableListOf<Galaxie>()
         val lesDistance = mutableListOf<Distance>()
         input.forEach { it ->
             output.add(it)
             if (it.none { it == '#' }) {
                 output.add(it)
+                println("UN")
             }
         }
         var x = 0
@@ -29,9 +32,10 @@ fun main() {
 
             if (!trouve) {
                 for (y in output.indices) {
-                    output[y] = output[y].substring(0, x - 1) + '.' + output[y].substring(x - 1)
+                    output[y] = output[y].substring(0, x ) + '.' + output[y].substring(x )
 
                 }
+                println("DEUX")
                 x++
             }
             x++
@@ -42,9 +46,9 @@ fun main() {
 
         var numero = 1
         for (y in output.indices) {
-            for (x in output[y].indices) {
-                if (output[y][x] == '#') {
-                    ciel.add(Galaxie(x,y,numero++))
+            for (posX in output[y].indices) {
+                if (output[y][posX] == '#') {
+                    ciel.add(Galaxie(posX,y,numero++))
                 }
 
             }
@@ -56,10 +60,10 @@ fun main() {
             }
         }
         lesDistance.forEach { une ->
-            une.distance = calculeDistance(une.un, une.deux)
+            une.distance = distanceManhattan(une.un, une.deux)
 
         }
-        reponse = lesDistance.sumOf { it.distance }
+        reponse = lesDistance.sumOf { it.distance.toLong() }
         return reponse
     }
 
@@ -71,7 +75,7 @@ fun main() {
 
     // test if implementation meets criteria from the description, like:
     var testInput = readInput("Day11_test")
-    check(part1(testInput) == 374)
+    check(part1(testInput) == 374L)
 
 //    testInput = readInput("Day01_test2")
 //    check(part2(testInput) == 281)
