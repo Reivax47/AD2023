@@ -11,6 +11,7 @@ fun main() {
             var reduced = historyRoot.mapIndexed { index, i -> if (index < historyRoot.size -1) historyRoot[index +1 ] -i else -123456789 }.toMutableList()
             reduced.removeAt(reduced.size -1)
             laListe.add(reduced)
+
             while (reduced.any { it != 0 }) {
                 reduced = reduced.mapIndexed { index, i -> if (index < reduced.size -1) reduced[index +1 ] -i else -123456789 }.toMutableList()
                 reduced.removeAt(reduced.size -1)
