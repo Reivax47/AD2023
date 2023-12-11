@@ -1,54 +1,60 @@
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 fun main() {
-    val output = mutableListOf<String>()
     data class Galaxie(val x: Int, val y: Int, val numero: Int)
-    data class Distance(val un : Galaxie, val deux :Galaxie, var distance : Int )
-
-    fun distanceManhattan(un: Galaxie, deux: Galaxie): Int {
-        return abs(un.x - deux.x) + abs(un.y - deux.y)
+    data class Distance(val un: Galaxie, val deux: Galaxie, var distance: Int)
+    val colonneVide = mutableListOf<Int>()
+    val ligneVide = mutableListOf<Int>()
+    fun distanceManhattan(un: Galaxie, deux: Galaxie, facteur:Int): Int {
+        val minX = min(un.x, deux.x)
+        val maxX = max(un.x, deux.x)
+        val minY = min(un.y, deux.y)
+        val maxY = max(un.y, deux.y)
+        val nbColVide = colonneVide.filter { it > minX && it <maxX }.size
+        val nbLigneVide = ligneVide.filter { it > minY && it < maxY }.size
+        var increment = 0
+        if (nbLigneVide > 0) {
+            increment += nbLigneVide * facteur - nbLigneVide
+        }
+        if (nbColVide > 0) {
+            increment += nbColVide * facteur - nbColVide
+        }
+        return abs(un.x - deux.x) + abs(un.y - deux.y) + increment
     }
 
     fun part1(input: List<String>): Long {
+        colonneVide.clear()
+        ligneVide.clear()
         var reponse = 0L
-        output.clear()
         val ciel = mutableListOf<Galaxie>()
         val lesDistance = mutableListOf<Distance>()
-        input.forEach { it ->
-            output.add(it)
-            if (it.none { it == '#' }) {
-                output.add(it)
-                println("UN")
+
+        for (y in input.indices) {
+            if (input[y].none { it == '#' }) {
+                ligneVide.add(y)
             }
+            println(input[y])
         }
-        var x = 0
-        while (x < output[0].length) {
+
+        for (x in input[0].indices) {
             var trouve = false
-            for (y in output.indices) {
-                if (output[y][x] == '#') {
+            for (y in input.indices) {
+                if (input[y][x] == '#') {
                     trouve = true
                 }
             }
-
             if (!trouve) {
-                for (y in output.indices) {
-                    output[y] = output[y].substring(0, x ) + '.' + output[y].substring(x )
-
-                }
-                println("DEUX")
-                x++
+                colonneVide.add(x)
             }
-            x++
-        }
-        output.forEach {
-            println(it)
         }
 
         var numero = 1
-        for (y in output.indices) {
-            for (posX in output[y].indices) {
-                if (output[y][posX] == '#') {
-                    ciel.add(Galaxie(posX,y,numero++))
+        for (y in input.indices) {
+            for (posX in input[y].indices) {
+                if (input[y][posX] == '#') {
+                    ciel.add(Galaxie(posX, y, numero++))
                 }
 
             }
@@ -60,16 +66,59 @@ fun main() {
             }
         }
         lesDistance.forEach { une ->
-            une.distance = distanceManhattan(une.un, une.deux)
+            une.distance = distanceManhattan(une.un, une.deux, 2)
 
         }
         reponse = lesDistance.sumOf { it.distance.toLong() }
         return reponse
     }
 
-    fun part2(input: List<String>): Int {
-        var reponse = 0
+    fun part2(input: List<String>): Long {
+        colonneVide.clear()
+        ligneVide.clear()
+        var reponse = 0L
+        val ciel = mutableListOf<Galaxie>()
+        val lesDistance = mutableListOf<Distance>()
 
+        for (y in input.indices) {
+            if (input[y].none { it == '#' }) {
+                ligneVide.add(y)
+            }
+            println(input[y])
+        }
+
+        for (x in input[0].indices) {
+            var trouve = false
+            for (y in input.indices) {
+                if (input[y][x] == '#') {
+                    trouve = true
+                }
+            }
+            if (!trouve) {
+                colonneVide.add(x)
+            }
+        }
+
+        var numero = 1
+        for (y in input.indices) {
+            for (posX in input[y].indices) {
+                if (input[y][posX] == '#') {
+                    ciel.add(Galaxie(posX, y, numero++))
+                }
+
+            }
+        }
+        ciel.forEach { uneGalaxie ->
+            ciel.filter { it.numero > uneGalaxie.numero }.forEach { uneTrouvee ->
+                lesDistance.add(Distance(uneGalaxie, uneTrouvee, -1))
+
+            }
+        }
+        lesDistance.forEach { une ->
+            une.distance = distanceManhattan(une.un, une.deux, 1000000)
+
+        }
+        reponse = lesDistance.sumOf { it.distance.toLong() }
         return reponse
     }
 
@@ -78,7 +127,7 @@ fun main() {
     check(part1(testInput) == 374L)
 
 //    testInput = readInput("Day01_test2")
-//    check(part2(testInput) == 281)
+//    check(part2(testInput) == 8410L)
 
     val input = readInput("Day11")
     part1(input).println()
